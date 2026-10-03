@@ -146,7 +146,7 @@ const FORM_ENDPOINT = '';
     var show = function (i) {
       lbIndex = (i + shots.length) % shots.length;
       var src = shots[lbIndex].querySelector('img');
-      lbImg.src = src.currentSrc || src.src;
+      lbImg.src = src.getAttribute('data-full') || src.currentSrc || src.src;
       lbImg.alt = src.alt;
       lbCount.textContent = (lbIndex + 1) + ' / ' + shots.length;
     };

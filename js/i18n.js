@@ -1,15 +1,20 @@
 /* 幽海工作室 DeepEcho: translations + tiny i18n engine (vanilla JS)
  *
- * Markup:
- *   data-i18n="key"                    element text is replaced with dict[key]
- *   data-i18n-attr="alt:key;aria-label:key2"   attributes are replaced
- * The Chinese copy stays in the HTML as the no-JS fallback; any key missing
- * from a dictionary falls back to whatever the HTML originally contained.
+ * Pages are static per language: Chinese at the site root (the source),
+ * other languages generated into /<lang>/ by  python tools/build_en.py <lang>.
+ * The build script bakes these dictionaries into the HTML:
+ *   data-i18n="key"                              element text = dict[key]
+ *   data-i18n-attr="alt:key;aria-label:key2"     attributes = dict[key]
+ * At runtime this file only serves strings created by scripts (form
+ * messages, menu labels) and drives the globe menu, which navigates between
+ * the language versions listed in each page's <link rel="alternate" hreflang>.
  *
- * Adding a language (e.g. Japanese), no HTML edits needed:
+ * Adding a language (e.g. Japanese):
  *   1. add  "ja": { ...same keys... }  to DICTS below
  *   2. add  "ja": { name: '日本語', short: '日本語' }  to NAMES below
- * The globe menu in the header is built from DICTS + NAMES automatically.
+ *   3. add  <link rel="alternate" hreflang="ja" href="https://abdeepecho.github.io/ja/...">
+ *      to the root pages, then run  python tools/build_en.py ja  (and re-run
+ *      it for en so the new alternate appears there too)
  */
 (function () {
   'use strict';
@@ -424,10 +429,9 @@
   };
 
   var DEFAULT = 'zh-Hant';
-  var STORAGE_KEY = 'deepecho-lang';
+  var STORAGE_KEY = 'deepecho-lang';   /* same key as js/lang-redirect.js */
   var LANGS = Object.keys(DICTS);
   var fallback = {};          /* original HTML text/attrs, captured once */
-  var current = DEFAULT;
 
   /* map any code ("en-US", "zh-TW", "zh") onto a supported language */
   function match(code) {
@@ -443,28 +447,28 @@
     return null;
   }
 
-  function readStore() {
-    try { return window.localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
-  }
+  /* Pages are static per language (Chinese at the root, others generated
+     into /<lang>/ by tools/build_en.py), so the page language is fixed. */
+  var current = match(document.documentElement.getAttribute('lang')) || DEFAULT;
+
   function writeStore(lang) {
     try { window.localStorage.setItem(STORAGE_KEY, lang); } catch (e) { /* storage blocked */ }
   }
 
-  function detect() {
-    var fromUrl = null;
-    try { fromUrl = match(new URLSearchParams(window.location.search).get('lang')); } catch (e) { /* old browser */ }
-    if (fromUrl) { writeStore(fromUrl); return fromUrl; }
-
-    var saved = match(readStore());
-    if (saved) return saved;
-
-    var prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
-    for (var i = 0; i < prefs.length; i++) {
-      if (String(prefs[i]).toLowerCase().indexOf('zh') === 0) return 'zh-Hant';
+  /* language -> URL path of this page in that language, from the
+     <link rel="alternate" hreflang> tags in <head> */
+  var VERSIONS = {};
+  (function () {
+    var links = document.querySelectorAll('link[rel="alternate"][hreflang]');
+    for (var i = 0; i < links.length; i++) {
+      var code = match(links[i].getAttribute('hreflang'));
+      if (!code || links[i].getAttribute('hreflang') === 'x-default') continue;
+      try { VERSIONS[code] = new URL(links[i].getAttribute('href'), window.location.href).pathname; } catch (e) { /* ignore */ }
     }
-    return match('en') || DEFAULT;
-  }
+  })();
 
+  /* runtime strings only (form messages, menu labels): the page text itself
+     is already in the right language */
   function t(key, lang) {
     var d = DICTS[lang || current] || {};
     if (Object.prototype.hasOwnProperty.call(d, key)) return d[key];
@@ -493,50 +497,32 @@
     }
   }
 
-  function apply(lang) {
-    lang = match(lang) || DEFAULT;
-    current = lang;
-    document.documentElement.setAttribute('lang', lang);
-
-    var els = document.querySelectorAll('[data-i18n]');
-    for (var i = 0; i < els.length; i++) {
-      var v = t(els[i].getAttribute('data-i18n'));
-      if (v != null && els[i].textContent !== v) els[i].textContent = v;
-    }
-    var attrEls = document.querySelectorAll('[data-i18n-attr]');
-    for (var j = 0; j < attrEls.length; j++) {
-      var el = attrEls[j];
-      parseAttrs(el.getAttribute('data-i18n-attr')).forEach(function (p) {
-        var val = t(p[1]);
-        if (val != null) el.setAttribute(p[0], val);
-      });
-    }
-
+  /* mark the current language in the menu and the label next to the globe */
+  function markCurrent() {
     var items = document.querySelectorAll('[data-lang]');
     for (var b = 0; b < items.length; b++) {
-      items[b].setAttribute('aria-checked', String(items[b].getAttribute('data-lang') === lang));
+      items[b].setAttribute('aria-checked', String(items[b].getAttribute('data-lang') === current));
     }
     var labels = document.querySelectorAll('[data-lang-current]');
     for (var c = 0; c < labels.length; c++) {
-      labels[c].textContent = (NAMES[lang] && NAMES[lang].short) || lang;
-      labels[c].setAttribute('lang', lang);
+      labels[c].textContent = (NAMES[current] && NAMES[current].short) || current;
+      labels[c].setAttribute('lang', current);
     }
+  }
 
-    document.dispatchEvent(new CustomEvent('de:langchange', { detail: { lang: lang } }));
+  /* the section the visitor is looking at, so switching language keeps the place */
+  function currentHash() {
+    if (window.location.hash) return window.location.hash;
+    var active = document.querySelector('.nav-links a[aria-current="true"]');
+    var href = active && active.getAttribute('href');
+    return href && href.indexOf('#') !== -1 ? href.slice(href.indexOf('#')) : '';
   }
 
   function setLang(lang) {
     lang = match(lang) || DEFAULT;
-    writeStore(lang);
-    apply(lang);
-    /* keep a ?lang= parameter (if present) in sync so a reload keeps the choice */
-    try {
-      var url = new URL(window.location.href);
-      if (url.searchParams.has('lang')) {
-        url.searchParams.set('lang', lang);
-        window.history.replaceState(window.history.state, '', url);
-      }
-    } catch (e) { /* old browser or file:// quirk */ }
+    writeStore(lang);                       /* explicit choice */
+    if (lang === current || !VERSIONS[lang]) return;
+    window.location.href = window.location.origin + VERSIONS[lang] + currentHash();
   }
 
   /* ------------------------------------------------------------------
@@ -544,6 +530,7 @@
      Enter / Space / ArrowDown open it on the current language, ArrowUp
      opens on the last item; arrows / Home / End move; Enter / Space pick;
      Esc closes and returns focus; Tab or a click outside closes.
+     Picking a language navigates to that language's version of the page.
      ------------------------------------------------------------------ */
   var CHECK_SVG = '<svg class="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>';
 
@@ -552,8 +539,11 @@
     var list = root.querySelector('.lang-list');
     if (!toggle || !list) return;
 
+    /* languages that have a dictionary AND a version of this page */
+    var codes = LANGS.filter(function (code) { return code === current || VERSIONS[code]; });
+
     list.innerHTML = '';
-    LANGS.forEach(function (code) {
+    codes.forEach(function (code) {
       var li = document.createElement('li');
       li.setAttribute('role', 'none');
       var item = document.createElement('button');
@@ -605,8 +595,8 @@
     list.addEventListener('click', function (e) {
       var item = e.target.closest('[data-lang]');
       if (!item) return;
-      setLang(item.getAttribute('data-lang'));
       close(true);
+      setLang(item.getAttribute('data-lang'));
     });
 
     root.addEventListener('keydown', function (e) {
@@ -632,7 +622,8 @@
   capture();
   var menus = document.querySelectorAll('[data-lang-menu]');
   for (var m = 0; m < menus.length; m++) buildMenu(menus[m]);
-  apply(detect());
+  markCurrent();
+  document.dispatchEvent(new CustomEvent('de:langchange', { detail: { lang: current } }));
 
   window.DeepEchoI18n = {
     dicts: DICTS,
