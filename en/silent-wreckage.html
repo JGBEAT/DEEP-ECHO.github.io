@@ -22,17 +22,18 @@
   <link rel="alternate" hreflang="zh-Hant" href="https://abdeepecho.github.io/silent-wreckage.html">
   <link rel="alternate" hreflang="en" href="https://abdeepecho.github.io/en/silent-wreckage.html">
   <link rel="alternate" hreflang="x-default" href="https://abdeepecho.github.io/silent-wreckage.html">
-  <script src="../js/lang-redirect.js?v=7"></script>
+  <script src="../js/lang-redirect.js?v=8"></script>
   <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
   <link rel="icon" type="image/png" sizes="512x512" href="../assets/brand/icon-512.png">
   <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;display=swap" rel="stylesheet">
-  <link href="../css/styles.css?v=7" rel="stylesheet">
+  <link href="../css/styles.css?v=8" rel="stylesheet">
   <script>document.documentElement.classList.add('js');</script>
 </head>
-<body class="page-game">
+<!-- 接案狀態：class「commissions-paused」= 暫停接案。重新開放：從 index.html 與 silent-wreckage.html 的 <body> 移除它，執行 python tools/build_en.py，再推送 -->
+<body class="page-game commissions-paused">
   <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
 
   <header class="site-header">
@@ -53,14 +54,14 @@
 
       <!-- 桌機只顯示主要 5 項（nav-extra 只出現在手機選單）；最後一項是「委託我們」按鈕 -->
       <ul class="nav-links" id="site-menu">
-        <li><a href="index.html#services"><span class="nav-num" aria-hidden="true">01</span><span data-i18n="nav.services">Services</span><span class="nav-en" aria-hidden="true">SERVICES</span></a></li>
-        <li class="nav-extra"><a href="index.html#process"><span class="nav-num" aria-hidden="true">02</span><span data-i18n="nav.process">Process</span><span class="nav-en" aria-hidden="true">PROCESS</span></a></li>
-        <li><a href="index.html#works"><span class="nav-num" aria-hidden="true">03</span><span data-i18n="nav.works">Works</span><span class="nav-en" aria-hidden="true">WORKS</span></a></li>
-        <li><a href="index.html#awards"><span class="nav-num" aria-hidden="true">04</span><span data-i18n="nav.awards">Awards</span><span class="nav-en" aria-hidden="true">AWARDS</span></a></li>
-        <li><a href="index.html#about"><span class="nav-num" aria-hidden="true">05</span><span data-i18n="nav.about">About</span><span class="nav-en" aria-hidden="true">ABOUT</span></a></li>
-        <li class="nav-extra"><a href="index.html#faq"><span class="nav-num" aria-hidden="true">06</span><span data-i18n="nav.faq">FAQ</span><span class="nav-en" aria-hidden="true">FAQ</span></a></li>
-        <li><a href="index.html#contact"><span class="nav-num" aria-hidden="true">07</span><span data-i18n="nav.contact">Contact</span><span class="nav-en" aria-hidden="true">CONTACT</span></a></li>
-        <li class="nav-cta"><a class="btn btn--solid btn--sm" href="index.html#contact" data-nav-cta data-i18n="nav.hire">Hire us</a></li>
+        <li><a href="index.html#services"><span class="nav-num" aria-hidden="true"></span><span data-i18n="nav.services">Services</span><span class="nav-en" aria-hidden="true">SERVICES</span></a></li>
+        <li class="nav-extra" data-when="open"><a href="index.html#process"><span class="nav-num" aria-hidden="true"></span><span data-i18n="nav.process">Process</span><span class="nav-en" aria-hidden="true">PROCESS</span></a></li>
+        <li><a href="index.html#works"><span class="nav-num" aria-hidden="true"></span><span data-i18n="nav.works">Works</span><span class="nav-en" aria-hidden="true">WORKS</span></a></li>
+        <li><a href="index.html#awards"><span class="nav-num" aria-hidden="true"></span><span data-i18n="nav.awards">Awards</span><span class="nav-en" aria-hidden="true">AWARDS</span></a></li>
+        <li><a href="index.html#about"><span class="nav-num" aria-hidden="true"></span><span data-i18n="nav.about">About</span><span class="nav-en" aria-hidden="true">ABOUT</span></a></li>
+        <li class="nav-extra" data-when="open"><a href="index.html#faq"><span class="nav-num" aria-hidden="true"></span><span data-i18n="nav.faq">FAQ</span><span class="nav-en" aria-hidden="true">FAQ</span></a></li>
+        <li><a href="index.html#contact"><span class="nav-num" aria-hidden="true"></span><span data-i18n="nav.contact">Contact</span><span class="nav-en" aria-hidden="true">CONTACT</span></a></li>
+        <li class="nav-cta" data-when="open"><a class="btn btn--solid btn--sm" href="index.html#contact" data-nav-cta data-i18n="nav.hire">Hire us</a></li>
       </ul>
 
       <!-- 語言選單：清單由 js/i18n.js 依字典自動產生，新增語言不需修改 HTML -->
@@ -230,7 +231,7 @@
     </button>
   </dialog>
 
-  <script src="../js/i18n.js?v=7"></script>
-  <script src="../js/scripts.js?v=7"></script>
+  <script src="../js/i18n.js?v=8"></script>
+  <script src="../js/scripts.js?v=8"></script>
 </body>
 </html>

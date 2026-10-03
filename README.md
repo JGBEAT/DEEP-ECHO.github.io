@@ -22,6 +22,14 @@ To add another language later (for example Japanese): add a `"ja"` dictionary an
 
 CSS/JS links end in `?v=N`. Bump the number in the root pages (then rebuild) when you change `css/` or `js/`, so visitors don't get stale files.
 
+## Commissions on / off
+
+Commissions are currently **paused**: `<body>` in `index.html` and `silent-wreckage.html` has the class `commissions-paused`. While paused, the Hire us button, the 洽談合作 hero button, the Process and FAQ sections and the inquiry form are hidden, and a short status note is shown instead. Section and menu numbers renumber themselves.
+
+**To reopen commissions:** remove the class `commissions-paused` from `<body>` in `index.html` and `silent-wreckage.html`, run `python tools/build_en.py`, push.
+
+(Elements that belong to only one state are marked `data-when="open"` or `data-when="paused"` in the HTML.)
+
 ## Commission form
 
 Set `FORM_ENDPOINT` at the top of `js/scripts.js` to a Formspree endpoint to receive submissions directly; when empty, the form opens the visitor's email app.

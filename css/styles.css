@@ -1,6 +1,13 @@
 /* ==========================================================================
    幽海工作室 DEEP ECHO
    Shared stylesheet for index.html and silent-wreckage.html (no build step)
+   ========================================================================== 
+   COMMISSIONS SWITCH
+   <body class="... commissions-paused"> = studio is not taking commissions.
+   To reopen commissions: remove the class commissions-paused from <body> in
+   index.html and silent-wreckage.html, run  python tools/build_en.py , push.
+   Elements marked data-when="open" / data-when="paused" show in one state only
+   (see "Commissions switch" near the end of this file).
    ========================================================================== */
 
 /* ---------- Tokens ---------- */
@@ -1905,6 +1912,80 @@ html[lang="en"] .nav-links .nav-en { display: none; }  /* would repeat the Engli
 }
 
 /* ==========================================================================
+   Commissions switch (body.commissions-paused)
+   ========================================================================== */
+body:not(.commissions-paused) [data-when="paused"],
+.commissions-paused [data-when="open"] { display: none !important; }
+
+/* section and menu numbers are counters, so they stay consecutive when
+   sections are hidden (display:none elements do not increment) */
+main { counter-reset: section; }
+main > section[id]:not(.hero) { counter-increment: section; }
+.eyebrow-num::before { content: counter(section, decimal-leading-zero); }
+.nav-links { counter-reset: navnum; }
+.nav-links > li:not(.nav-cta) { counter-increment: navnum; }
+.nav-num::before { content: counter(navnum, decimal-leading-zero); }
+
+/* calm status note */
+.status-pill {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 8px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  color: var(--body);
+}
+.status-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* hero: "Explore our work" becomes the primary call to action */
+.commissions-paused .hero-actions .btn--ghost {
+  background: var(--page-accent);
+  border-color: var(--page-accent);
+  color: var(--on-accent);
+}
+.commissions-paused .hero-actions .btn--ghost:hover {
+  background: var(--page-accent-hi);
+  border-color: var(--page-accent-hi);
+  color: var(--on-accent);
+  box-shadow: 0 0 32px -8px color-mix(in srgb, var(--page-accent) 70%, transparent);
+}
+
+/* contact: no form; socials first and larger, email after */
+.commissions-paused .contact-grid { grid-template-columns: minmax(0, 1fr); }
+.commissions-paused .contact-side { padding-top: 0; }
+.commissions-paused .contact-side .side-label { margin-top: 0; }
+.commissions-paused .contact-side .side-label:nth-of-type(2) { order: -2; }
+.commissions-paused .contact-side .socials { order: -1; }
+.commissions-paused .contact-side .side-label:first-child { margin-top: 20px; }
+.commissions-paused .contact-side .socials {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 760px;
+  margin-top: 0;
+}
+.commissions-paused .contact-side .socials a {
+  width: 100%;
+  min-height: 56px;
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+}
+@media (max-width: 900px) {
+  .commissions-paused .contact-side .socials { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ==========================================================================
    Typography: the only place fonts are set.
    Two families (Noto Sans TC, Noto Serif TC), one scale (--fs-*), and
    language-specific rhythm via variables.
@@ -2047,6 +2128,10 @@ h1, h2, h3,
   .nav-links .nav-cta a { font-size: var(--fs-base); letter-spacing: var(--ls-ui); }
   .faq-item p { font-size: var(--fs-sm); }
 }
+
+/* commissions switch */
+.status-pill { font-size: var(--fs-sm); line-height: 1.5; letter-spacing: var(--ls-body); }
+.commissions-paused .contact-side .socials a { font-size: var(--fs-base); }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {

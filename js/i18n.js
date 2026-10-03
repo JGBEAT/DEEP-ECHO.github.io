@@ -217,7 +217,12 @@
       'form.fail': '送出失敗，請稍後再試，或直接來信 abstarhuides@gmail.com。',
       'form.mailto': '已為你開啟郵件程式並填好內容，請確認後寄出。若沒有自動開啟，請直接來信 abstarhuides@gmail.com。',
       'form.subject': '委託',
-      'form.none': '（未填）'
+      'form.none': '（未填）',
+
+      /* round 6: commissions paused (body.commissions-paused) */
+      'status.paused': '目前暫停接案，歡迎追蹤我們的社群獲得最新消息。',
+      'contact.title.paused': '聯絡我們',
+      'contact.lead.paused': '媒體、合作提案或其他詢問，歡迎來信。'
     },
 
     'en': {
@@ -417,7 +422,12 @@
       'form.fail': 'Something went wrong. Please try again later, or email abstarhuides@gmail.com.',
       'form.mailto': 'We opened your email app with the details filled in. Please review and send it. If nothing opened, email abstarhuides@gmail.com directly.',
       'form.subject': 'Inquiry',
-      'form.none': '(not provided)'
+      'form.none': '(not provided)',
+
+      /* round 6: commissions paused (body.commissions-paused) */
+      'status.paused': 'We\'re not taking new commissions right now. Follow us for updates.',
+      'contact.title.paused': 'Contact',
+      'contact.lead.paused': 'For press, partnerships or other enquiries, drop us an email.'
     }
   };
 

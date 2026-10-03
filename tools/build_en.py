@@ -167,7 +167,9 @@ def main():
     out_dir = os.path.join(ROOT, lang)
     os.makedirs(out_dir, exist_ok=True)
     warnings = []
-    pages = sorted(glob.glob(os.path.join(ROOT, '*.html')))
+    # real pages only (skips e.g. the Google Search Console verification file)
+    pages = [p for p in sorted(glob.glob(os.path.join(ROOT, '*.html')))
+             if '<html lang=' in open(p, encoding='utf-8').read(4096)]
     for path in pages:
         name = os.path.basename(path)
         src = open(path, encoding='utf-8').read()
