@@ -4,7 +4,7 @@
  * Leave empty to fall back to opening the visitor's email app (mailto:).
  * To receive submissions directly, create a free Formspree form and paste its
  * endpoint here, e.g. 'https://formspree.io/f/xxxxxxx'. */
-const FORM_ENDPOINT = '';
+const FORM_ENDPOINT = 'https://formspree.io/f/xyezrzny';
 
 (function () {
   'use strict';
